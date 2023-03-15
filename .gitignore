@@ -6,6 +6,15 @@ __pycache__/
 # C extensions
 *.so
 
+# React frontend
+/frontend/build/
+/frontend/node_modules/
+
+#static
+backend/foodgram/static/
+backend/foodgram/media/
+
+
 # Distribution / packaging
 .Python
 build/
