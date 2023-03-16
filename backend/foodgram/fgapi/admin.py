@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django import forms
-from .models import Tag, Ingredient, Recipe, IngredientAmount, FavoriteRecipe, ShoppingList
+from .models import (Recipe, IngredientAmount,
+                     Tag, Ingredient, FavoriteRecipe, ShoppingList)
 
 
 @admin.register(Tag)
@@ -22,13 +23,16 @@ class IngredientAmountAdmin(admin.ModelAdmin):
 class FavoriteRecipeAdmin(admin.ModelAdmin):
     pass
 
+
 @admin.register(ShoppingList)
 class ShoppingListAdmin(admin.ModelAdmin):
     pass
 
+
 class IngredientAmountInline(admin.TabularInline):
     model = IngredientAmount
     extra = 1
+
 
 class RecipeForm(forms.ModelForm):
     ingredients = forms.ModelMultipleChoiceField(
@@ -44,7 +48,8 @@ class RecipeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
-            self.fields['ingredients'].initial = self.instance.ingredients.values_list('pk', flat=True)
+            self.fields['ingredients'].initial = \
+                self.instance.ingredients.values_list('pk', flat=True)
 
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -69,13 +74,14 @@ class RecipeAdmin(admin.ModelAdmin):
         # Use our custom form for the RecipeAdmin
         if obj is None:
             # In case of adding a new Recipe
-            self.form.base_fields['ingredients'].initial = [1,]
+            self.form.base_fields['ingredients'].initial = [1, ]
         return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
         # Assign the user creating the recipe to the recipe object
         obj.author = request.user
         obj.save()
+
 
 admin.site.unregister(Recipe)
 admin.site.register(Recipe, RecipeAdmin)

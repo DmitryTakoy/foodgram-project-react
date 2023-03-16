@@ -18,7 +18,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -28,12 +27,13 @@ SECRET_KEY = 'django-insecure-k@sk%=0*p0o*+j#jl)$#g*%7zc_aue^t^6ky(u0z=!b!4-j($x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '172.23.0.3', 'localhost', 'localhost:3000']
+ALLOWED_HOSTS = ['127.0.0.1', '172.23.0.3', 'localhost', 'localhost:3000', 'foodgram']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'users',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    'users',
 ]
 
 MIDDLEWARE = [
@@ -90,14 +89,14 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', default="django.db.backends.postgresql"),
+        'NAME': os.getenv('DB_NAME', default="foodgram"),
+        'USER': os.getenv('POSTGRES_USER', default="postgres"),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default="postgres"),
+        'HOST': os.getenv('DB_HOST', default="db"),
+        'PORT': os.getenv('DB_PORT', default="5432")
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -132,7 +131,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/staticfiles/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -155,19 +157,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 6,
 }
 
-
-# STATICFILES_DIRS = (
-#   os.path.join(BASE_DIR, 'static'),
-#   os.path.join(BASE_DIR, 'media'),
-# )
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 CORS_ORIGIN_ALLOW_ALL = True
-# CORS_URLS_REGEX = r'^/api/.*$'
-# CORS_URLS_REGEX = '' 
+#CORS_URLS_REGEX = r'^/api/.*$' 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000', 'http://localhost:80', 'http://localhost:5000',
 ] 
