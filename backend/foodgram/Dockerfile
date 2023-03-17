@@ -18,9 +18,13 @@ RUN pip install --upgrade pip && \
 # Copy project files
 COPY . /app/
 
-# Скопировать содержимое директории /api_yamdb c локального компьютера
+# Скопировать содержимое директории c локального компьютера
 # в директорию /app.
 COPY foodgram/ /app
+COPY staticfiles/Arial.ttf /app/static/Arial.ttf
+
+# Выставим энтрипоинт
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Выполнить запуск сервера разработки при старте контейнера.
 CMD ["gunicorn", "foodgram.wsgi:application", "--bind", "0.0.0.0:8000" ] 

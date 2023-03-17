@@ -24,6 +24,7 @@ from .serializers import (
 )
 from users.models import User
 from .filters import IngredientFilter
+from .paginators import CustomPagination
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -49,6 +50,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(favoriterecipe__user=self.request.user)
         if is_in_shopping_cart is not None:
             queryset = queryset.filter(shopping_lists__user=self.request.user)
+        queryset = queryset.distinct()
         return queryset
 
     def get_serializer_class(self):

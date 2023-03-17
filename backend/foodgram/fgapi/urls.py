@@ -15,7 +15,6 @@ router.register(r'ingredients', IngredientViewSet)
 router.register(r'tags', TagViewSet)
 
 app_name = 'fgapi'
-print("urls.py is being processed...")
 urlpatterns = [
     path('recipes/download_shopping_cart/',
          download_shopping_cart_t,

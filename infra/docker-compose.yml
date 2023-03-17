@@ -1,17 +1,55 @@
 version: '3.3'
 services:
-
+  my-postgres:
+    image: postgres:latest
+    container_name: my-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: foodgram
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+  
+  foodgram:
+    build: ../backend/foodgram
+    container_name: foodgram
+    restart: always
+    ports:
+      - 8000:8000
+    volumes:
+      - static_value:/app/staticfiles/
+      - media_value:/app/media/
+     #"зависит от", 
+    depends_on:
+      - my-postgres
+    env_file:
+      - ./.env
+  
   frontend:
     build:
       context: ../frontend
       dockerfile: Dockerfile
+    container_name: front
+    depends_on:
+      - foodgram
+    #volumes:
+    #  - ../frontend/:/app/result_build/
     volumes:
-      - ../frontend/:/app/result_build/
+      - ../frontend/build:/usr/share/nginx/html/
+    command: npm start
+  
   nginx:
     image: nginx:1.19.3
+    container_name: nginx
     ports:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
+volumes:
+  # Новые тома 
+  static_value:
+  media_value:
+  pgdata: 

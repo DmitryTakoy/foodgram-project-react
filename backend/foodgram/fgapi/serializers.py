@@ -102,7 +102,7 @@ class PostRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ['name', 'ingredients', 'text',
+        fields = ['id', 'name', 'ingredients', 'text',
                   'tags', 'image', 'cooking_time']
 
     def create(self, validated_data):

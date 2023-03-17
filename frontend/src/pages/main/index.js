@@ -34,10 +34,12 @@ const HomePage = ({ updateOrders }) => {
   useEffect(_ => {
     getRecipes({ page: recipesPage, tags: tagsValue })
   }, [recipesPage, tagsValue])
+  
 
   useEffect(_ => {
     api.getTags()
       .then(tags => {
+        console.log(tags);
         setTagsValue(tags.map(tag => ({ ...tag, value: true })))
       })
   }, [])

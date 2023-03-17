@@ -9,10 +9,12 @@ __pycache__/
 # React frontend
 /frontend/build/
 /frontend/node_modules/
+/frontend/docs
 
 #static
-backend/foodgram/static/
+backend/foodgram/staticfiles/
 backend/foodgram/media/
+infra/static/
 
 
 # Distribution / packaging
@@ -118,6 +120,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+nginx.conf
 
 # Spyder project settings
 .spyderproject
