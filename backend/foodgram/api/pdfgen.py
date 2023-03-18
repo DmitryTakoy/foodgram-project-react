@@ -11,29 +11,27 @@ from django.views.decorators.csrf import csrf_exempt
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph
+from reportlab.lib.fonts import addMapping
 from rest_framework.decorators import api_view
 from PIL import Image as PILImage
 from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import A4
-from reportlab.graphics.shapes import Image
 from reportlab.lib.utils import ImageReader
 from reportlab.platypus import Frame
 from reportlab.platypus import PageTemplate
 from reportlab.platypus import BaseDocTemplate
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph
-from django.templatetags.static import static
 
-
-from .models import (
+from core.models import (
     Recipe,
     IngredientAmount,
     ShoppingList
 )
 
-# arial_font_path = os.path.join(settings.STATIC_ROOT, 'Arial.ttf')
-
-# pdfmetrics.registerFont(TTFont('Arial', arial_font_path))
+dejavu_sans_ttf = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+pdfmetrics.registerFont(TTFont("DejaVuSans", dejavu_sans_ttf))
+addMapping('DejaVuSans', 0, 0, 'DejaVuSans')
 
 
 @api_view(['POST', 'GET'])
@@ -64,7 +62,7 @@ def download_shopping_cart_t(request):
     doc = BaseDocTemplate(buffer, pagesize=A4)
 
     styles = getSampleStyleSheet()
-    styles['Normal'].fontName = 'Helvetica'
+    styles['Normal'].fontName = 'DejaVuSans'
     styles['Normal'].fontSize = 20
     styles['Normal'].textColor = HexColor("#000000")
     styles['Normal'].leading = 52  # Adjust the value as needed
@@ -95,7 +93,7 @@ def download_shopping_cart_t(request):
         frame_height)
     doc.addPageTemplates([BackgroundPageTemplate(frames=frame)])
 
-    square = "<font name='Arial' size=35>☐</font>"
+    square = "<font name='DejaVuSans' size=35>☐</font>"
     ingredients_text = "<br/>".join(
         f"{name}: {data['amount']} {data['measurement_unit']} {square}"
         for name, data in shopping_cart.items()

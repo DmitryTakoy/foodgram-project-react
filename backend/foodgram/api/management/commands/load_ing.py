@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from fgapi.models import Ingredient
+from core.models import Ingredient
 import json
 
 class Command(BaseCommand):

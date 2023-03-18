@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ['127.0.0.1', '51.250.28.124', 'localhost', 'localhost:3000', 'f
 # Application definition
 
 INSTALLED_APPS = [
-    'users',
+    'core',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt',
     'foodgram',
-    'fgapi',
+    'api',
     'djoser',
     'rest_framework.authtoken',
     'django_filters',
@@ -97,6 +97,12 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', default="5432")
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -141,7 +147,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'core.User'
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -158,9 +165,6 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
-#CORS_URLS_REGEX = r'^/api/.*$' 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000', 'http://localhost:80', 'http://localhost:5000',
-] 
-
-#AUTHENTICATION_BACKENDS = ('users.models.EmailBackend', 'django.contrib.auth.backends.ModelBackend')
+]

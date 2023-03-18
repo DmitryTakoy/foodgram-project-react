@@ -1,9 +1,21 @@
+# Register your models here.
 from django.contrib import admin
-from django import forms
+from .models import User, Subscription
+from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
+from django.contrib import admin
 from .models import (Recipe, IngredientAmount,
                      Tag, Ingredient, FavoriteRecipe, ShoppingList)
+from .forms import RecipeForm
 
+#admin.site.unregister(User)
+# came from users
+class UserAdmin(DefaultUserAdmin):
+    search_fields=['username', 'email']
 
+admin.site.register(User, UserAdmin) 
+admin.site.register(Subscription)
+
+# came from fgapi
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     pass
@@ -32,33 +44,7 @@ class ShoppingListAdmin(admin.ModelAdmin):
 class IngredientAmountInline(admin.TabularInline):
     model = IngredientAmount
     extra = 1
-
-
-class RecipeForm(forms.ModelForm):
-    ingredients = forms.ModelMultipleChoiceField(
-        queryset=Ingredient.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        label='Ингредиенты'
-    )
-
-    class Meta:
-        model = Recipe
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance.pk:
-            self.fields['ingredients'].initial = \
-                self.instance.ingredients.values_list('pk', flat=True)
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        if commit:
-            instance.save()
-        if instance.pk:
-            instance.ingredients.set(self.cleaned_data['ingredients'])
-            self.save_m2m()
-        return instance
+    min_num = 1
 
 
 class RecipeAdmin(admin.ModelAdmin):

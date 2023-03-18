@@ -1,18 +1,12 @@
-"""foodgram URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+from django.urls import path, include
+from rest_framework import routers
+from .views import (RecipeViewSet,
+                    IngredientViewSet,
+                    TagViewSet,
+                    FavoriteRecipeView,
+                    add_recipe_to_shopping_cart,
+                    SubscribedToView)
+from .pdfgen import download_shopping_cart_t
 from django.urls import path, include
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView,
@@ -28,8 +22,27 @@ from .views import (MyProfileView,
                     LogoutView)
 
 
+router = routers.DefaultRouter()
+router.register(r'recipes', RecipeViewSet)
+router.register(r'ingredients', IngredientViewSet)
+router.register(r'tags', TagViewSet)
+
+app_name = 'fgapi'
 urlpatterns = [
-    path('api-auth/',
+    path('recipes/download_shopping_cart/',
+         download_shopping_cart_t,
+         name='download_shopping_cart'),
+    path('', include(router.urls)),
+    path('recipes/<int:id>/favorite/',
+         FavoriteRecipeView.as_view(),
+         name='favorite_recipe'),
+    path('recipes/<int:id>/shopping_cart/',
+         add_recipe_to_shopping_cart,
+         name='add_recipe_to_shopping_cart'),
+    path('users/subscriptions/',
+         SubscribedToView.as_view(),
+         name='subscription-list'),
+         path('api-auth/',
          include('rest_framework.urls',
                  namespace='rest_framework')),
     path('token/',
