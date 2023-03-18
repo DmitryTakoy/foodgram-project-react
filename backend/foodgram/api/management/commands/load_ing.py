@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from core.models import Ingredient
 import json
 
+
 class Command(BaseCommand):
     help = 'Load ingredients from JSON file'
 
@@ -10,7 +11,9 @@ class Command(BaseCommand):
             data = json.load(f)
 
         for item in data:
-            ingredient = Ingredient(name=item['name'], measurement_unit=item['measurement_unit'])
+            ingredient = Ingredient(
+                name=item['name'], measurement_unit=item['measurement_unit'])
             ingredient.save()
 
-        self.stdout.write(self.style.SUCCESS('Ingredients loaded successfully'))
+        self.stdout.write(
+            self.style.SUCCESS('Ingredients loaded successfully'))

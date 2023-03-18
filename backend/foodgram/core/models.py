@@ -9,11 +9,10 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
-from datetime import datetime
 from django.db.models import Q
 from django.utils.translation import gettext as _
 
-# Came from users 
+# Came from users
 
 USER = 'user'
 MODERATOR = 'moderator'
@@ -90,10 +89,18 @@ class Subscription(models.Model):
 
     class Meta:
         unique_together = ('subscriber', 'subscribed_to')
+        verbose_name = 'Подписки'
 
-from django.contrib.auth.backends import ModelBackend # не могу переместить этот импорт и ничего с ним сделать. 
-# суммарно 5-6 часов потратил чтобы убрать или переместить, что только не перeпробовал - 
-# все ломает приложение с ошибкой ""django.core.exceptions.ImproperlyConfigured: AUTH_USER_MODEL refers to model 'core.User' that has not been installed""
+
+from django.contrib.auth.backends import ModelBackend
+# не могу переместить этот импорт и ничего с ним сделать.
+# суммарно 5-6 часов потратил чтобы
+# убрать или переместить, что только не перeпробовал -
+# все ломает приложение с ошибкой
+# ""django.core.exceptions.ImproperlyConfigured:
+# AUTH_USER_MODEL refers to model 'core.User' that has not been installed""
+
+
 class EmailBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
@@ -254,5 +261,3 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Recipe, RecipeAdmin)
-
-

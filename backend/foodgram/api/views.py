@@ -1,58 +1,44 @@
-from rest_framework import generics, status, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, generics, permissions, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.pagination import (LimitOffsetPagination,
-                                       PageNumberPagination)
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.pagination import (
+    LimitOffsetPagination,
+    PageNumberPagination,
+)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from core.models import (
+    FavoriteRecipe,
     Ingredient,
     Recipe,
-    Tag,
-    FavoriteRecipe,
     ShoppingList,
-    User
-)
-from .serializers import (
-    IngredientSerializer,
-    RecipeSerializer,
-    SubscribedUserSerializer,
-    TagSerializer,
-    PostRecipeSerializer,
+    Subscription,
+    Tag,
+    User,
 )
 from .filters import IngredientFilter
 from .paginators import CustomPagination
-
-from django_filters.rest_framework import DjangoFilterBackend
-
-from rest_framework import filters, generics, permissions, status, viewsets
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.generics import RetrieveAPIView
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
-
-from core.models import Subscription, User
 from .serializers import (
     AuthTokenEmailSerializer,
     CustUserSerializer,
     CustomTokenObtainPairSerializer,
+    IngredientSerializer,
+    PostRecipeSerializer,
+    RecipeSerializer,
+    SubscribedUserSerializer,
     SubscriptionSerializer,
+    TagSerializer,
     UserCreateSerializer,
     UserLoginSerializer,
     UserSerializer,
 )
-
-from core.models import User, Subscription
-
-from rest_framework.filters import OrderingFilter, SearchFilter
-
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -218,6 +204,7 @@ class SubscribedToView(APIView, LimitOffsetPagination):
         serializer = SubscribedUserSerializer(
             users, many=True, context={'request': request})
         return Response(serializer.data)
+
 
 # came from users
 class UserRegistrationView(generics.CreateAPIView):

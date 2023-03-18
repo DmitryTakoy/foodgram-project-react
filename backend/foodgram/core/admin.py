@@ -7,13 +7,16 @@ from .models import (Recipe, IngredientAmount,
                      Tag, Ingredient, FavoriteRecipe, ShoppingList)
 from .forms import RecipeForm
 
-#admin.site.unregister(User)
+
+# admin.site.unregister(User)
 # came from users
 class UserAdmin(DefaultUserAdmin):
-    search_fields=['username', 'email']
+    search_fields = ['username', 'email']
 
-admin.site.register(User, UserAdmin) 
+
+admin.site.register(User, UserAdmin)
 admin.site.register(Subscription)
+
 
 # came from fgapi
 @admin.register(Tag)

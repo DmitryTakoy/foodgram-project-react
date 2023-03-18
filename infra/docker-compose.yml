@@ -12,7 +12,7 @@ services:
       - pgdata:/var/lib/postgresql/data/
   
   foodgram:
-    build: ../backend/foodgram
+    image: dmitrytakoy/foodgram:v1.05
     container_name: foodgram
     restart: always
     ports:
@@ -27,9 +27,7 @@ services:
       - ./.env
   
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: dmitrytakoy/fg_front_ya:v1.00
     container_name: front
     depends_on:
       - foodgram
@@ -42,6 +40,10 @@ services:
   nginx:
     image: nginx:1.19.3
     container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - foodgram
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/

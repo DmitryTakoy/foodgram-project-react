@@ -1,6 +1,6 @@
 Адрес сайта: 51.250.28.124
-Админ login: a@ya.ru
-Админ pass: admin
+Админ login: d@d.ru
+Админ pass: admin26
 
 
 # Foodgram Project

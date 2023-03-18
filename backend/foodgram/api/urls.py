@@ -42,7 +42,7 @@ urlpatterns = [
     path('users/subscriptions/',
          SubscribedToView.as_view(),
          name='subscription-list'),
-         path('api-auth/',
+    path('api-auth/',
          include('rest_framework.urls',
                  namespace='rest_framework')),
     path('token/',

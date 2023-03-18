@@ -2,17 +2,42 @@ import base64
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 from core.models import Recipe, Ingredient, Tag, IngredientAmount
-#from .serializers import UserSerializer
 from core.models import User, Subscription
 from djoser.serializers import UserSerializer
 from django.utils.translation import gettext as _
-from django.contrib.auth import authenticate 
+from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from core.models import Subscription, User
 from django.db.models import Q
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Serializer for user objects"""
+
+    is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('email', 'id', 'username', 'first_name',
+                  'last_name', 'is_subscribed')
+
+    def get_is_subscribed(self, obj):
+        """
+        Get subscription status of the user
+        """
+        current_user = None
+        request = self.context.get('request')
+        if request and hasattr(request, 'user') and \
+                request.user.is_authenticated:
+            current_user = request.user
+            return Subscription.objects.filter(
+                subscriber=current_user,
+                subscribed_to=obj
+            ).exists()
+        return False
 
 
 class Base64ImageField(serializers.ImageField):
@@ -216,7 +241,7 @@ class SubscribedUserSerializer(serializers.ModelSerializer):
         return Recipe.objects.filter(author=obj).count()
 
 
-# came from users 
+# came from users
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -254,32 +279,6 @@ class UserLoginSerializer(serializers.Serializer):
     model = User
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
-
-
-class UserSerializer(UserSerializer):
-    """Serializer for user objects"""
-
-    is_subscribed = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = ('email', 'id', 'username', 'first_name',
-                  'last_name', 'is_subscribed')
-
-    def get_is_subscribed(self, obj):
-        """
-        Get subscription status of the user
-        """
-        current_user = None
-        request = self.context.get('request')
-        if request and hasattr(request, 'user') and \
-                request.user.is_authenticated:
-            current_user = request.user
-            return Subscription.objects.filter(
-                subscriber=current_user,
-                subscribed_to=obj
-            ).exists()
-        return False
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
