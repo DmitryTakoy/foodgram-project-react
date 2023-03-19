@@ -32,6 +32,14 @@ from core.models import (
 dejavu_sans_ttf = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 pdfmetrics.registerFont(TTFont("DejaVuSans", dejavu_sans_ttf))
 addMapping('DejaVuSans', 0, 0, 'DejaVuSans')
+INCH = 1
+LEFT_MARGIN = 1.2 * INCH
+TOP_MARGIN = 2 * INCH
+FRAME_WIDTH = 10 * INCH
+FRAME_HEIGHT = 9 * INCH
+FONT_SIZE = 20
+LEADING = 52
+TEXT_COLOR = HexColor("#000000")
 
 
 @api_view(['POST', 'GET'])
@@ -63,14 +71,14 @@ def download_shopping_cart_t(request):
 
     styles = getSampleStyleSheet()
     styles['Normal'].fontName = 'DejaVuSans'
-    styles['Normal'].fontSize = 20
-    styles['Normal'].textColor = HexColor("#000000")
-    styles['Normal'].leading = 52  # Adjust the value as needed
+    styles['Normal'].fontSize = FONT_SIZE
+    styles['Normal'].textColor = TEXT_COLOR
+    styles['Normal'].leading = LEADING 
 
-    frame_margin_left = 1.2 * inch
-    frame_margin_top = 2 * inch
-    frame_width = 10 * inch
-    frame_height = 9 * inch
+    frame_margin_left = LEFT_MARGIN
+    frame_margin_top = TOP_MARGIN
+    frame_width = FRAME_WIDTH
+    frame_height = FRAME_HEIGHT
 
     class BackgroundPageTemplate(PageTemplate):
         def beforeDrawPage(self, canvas, doc):

@@ -87,6 +87,9 @@ class Subscription(models.Model):
         related_name='subscribers')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.subscriber.username} подписан на {self.subscribed_to.username}"
+
     class Meta:
         unique_together = ('subscriber', 'subscribed_to')
         verbose_name = 'Подписки'
@@ -173,7 +176,8 @@ class Recipe(models.Model):
         related_name='recipes',
         verbose_name='Ингредиенты')
     tags = models.ManyToManyField(
-        Tag, verbose_name='Теги')
+        Tag, verbose_name='Теги',
+        related_name='recipes_with_tag')
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления (мин)')
 
@@ -215,6 +219,9 @@ class FavoriteRecipe(models.Model):
         Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name='Дата создания')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.recipe.name}"
 
     class Meta:
         verbose_name = 'Избранный рецепт'

@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.generics import ListAPIView
 
 from core.models import (
     FavoriteRecipe,
@@ -44,7 +45,9 @@ from .serializers import (
 class RecipeViewSet(viewsets.ModelViewSet):
     """Manage recipes in the database"""
     serializer_class = RecipeSerializer
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().select_related(
+        'author').prefetch_related(
+        'tags', 'ingredients')
     permission_classes = (AllowAny,)
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ('tags__slug', 'author')
@@ -54,23 +57,29 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        tags = self.request.query_params.getlist('tags')
+        queryset = self.filter_queryset_by_params(queryset, self.request.query_params)
+        return queryset
+
+    def filter_queryset_by_params(self, queryset, query_params):
+        tags = query_params.getlist('tags')
+
         if tags:
             queryset = queryset.filter(tags__slug__in=tags)
-        is_favorite = self.request.query_params.get('is_favorited', None)
-        is_in_shopping_cart = self.request.query_params.get(
-            'is_in_shopping_cart', None)
+
+        is_favorite = query_params.get('is_favorited', None)
+        is_in_shopping_cart = query_params.get('is_in_shopping_cart', None)
+
         if is_favorite == '1':
             queryset = queryset.filter(favoriterecipe__user=self.request.user)
+
         if is_in_shopping_cart is not None:
             queryset = queryset.filter(shopping_lists__user=self.request.user)
-        queryset = queryset.distinct()
-        return queryset
+
+        return queryset.distinct()
 
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'retrieve':
             return RecipeSerializer
-        print("POSTRECIPESERIALIZERWASUSED")
         return PostRecipeSerializer
 
     def perform_create(self, serializer):
@@ -338,7 +347,7 @@ class SubscriptionView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class SubscribedToView(APIView):
+class SubscribedToView(ListAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination
     filter_backends = (
@@ -346,16 +355,14 @@ class SubscribedToView(APIView):
         OrderingFilter,
         SearchFilter,
     )
-    filterset_fields = ('tags__slug', 'author')
+    serializer_class = SubscribedUserSerializer
 
-    def get(self, request):
-        subscribed_users = request.user.subscriptions.values_list(
+    def get_queryset(self):
+        subscribed_users = self.request.user.subscriptions.values_list(
             'subscribed_to__id',
             flat=True,
         )
-        users = User.objects.filter(id__in=subscribed_users)
-        serializer = CustUserSerializer(users, many=True)
-        return Response(serializer.data)
+        return User.objects.filter(id__in=subscribed_users).order_by('id')
 
 
 class SubscribersView(APIView):
